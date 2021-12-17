@@ -1,0 +1,892 @@
+<!-- <!DOCTYPE html> -->
+<link rel="stylesheet" type ="text/css"  href="board.css">
+<div class = "container"></div>
+<div class="currentPlayer"> 
+    <span class = "player"></span>'s turn
+<div class="board"></div>
+<div class="restart">
+    <button class="playAgain">play again</button>
+</div>
+<!-- <div class = "pieces">
+    <div class = "white-pawn"></div>
+    <div class = "white-bishop"></div>
+    <div class = "white-rook"></div>
+    <div class = "white-knight"></div>
+    <div class = "white-queen"></div>
+    <div class = "white-king"></div>
+    <div class = "black-pawn"></div>
+    <div class = "black-bishop"></div>
+    <div class = "black-rook"></div>
+    <div class = "black-knight"></div>
+    <div class = "black-queen"></div>
+    <div class = "black-king"></div>
+</div> -->
+
+
+</div>
+
+
+<script>
+    let board=document.querySelector(".board") 
+    let player=document.querySelector(".player") 
+    let playAgain=document.querySelector(".playAgain") 
+    let restart=document.querySelector(".restart") 
+    let box=0
+    let currentPlayer='White'
+    var lastSelectedPiece = ""
+    var lastSelectedLocation = ""
+    var kingOrRookMoved = false
+    var x
+    var y
+    var blackPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king"]
+    var whitePieces = ["white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
+    var allPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king",
+    "white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
+    document.addEventListener("DOMContentLoaded",loadDom)
+    // document.addEventListener("mouseover",highlight)
+    
+    
+    function highlight(){
+        console.log("calling highlight")
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        // if(square.classList.contains("open-square")){
+            if(square.classList[0]==="blackSquare"){
+            square.classList.add("highlight-dark")
+             }
+             else{
+                 square.classList.add("highlight-light")
+            }
+        // }
+    }
+
+    function unhighlight(){
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        if(square.classList[0]==="blackSquare"){
+            square.classList.remove("highlight-dark")
+             }
+             else{
+                 square.classList.remove("highlight-light")
+            }
+    }
+
+
+    function pawnPromotion(squareIndex){
+        squares.forEach(square =>{
+            square.removeEventListener("click",clickBox)
+        })
+        // document.addEventListener("mouseover",pawnPromotion)
+        let squares =document.querySelectorAll('.board div')
+        square = squares[arguments[0]]
+        square.classList.remove("white-pawn")
+        square.classList.add("white-queen")
+        console.log(square.classList)
+         squares[arguments[0]+8].classList.add("white-knight")
+        squares[arguments[0]+16].classList.add("white-rook")
+        squares[arguments[0]+24].classList.add("white-bishop")
+        // squares[arguments[0]+8].addEventListener(pawnHighlight)
+        square.classList.add("pawn-promotion")
+        square.addEventListener("mouseover",pawnHighlight)
+         squares[arguments[0]+8].addEventListener("mouseover",pawnHighlight)
+        squares[arguments[0]+16].addEventListener("mouseover",pawnHighlight)
+        squares[arguments[0]+24].addEventListener("mouseover",pawnHighlight)
+        square.addEventListener("mouseout",pawnUnhighlight)
+         squares[arguments[0]+8].addEventListener("mouseout",pawnUnhighlight)
+        squares[arguments[0]+16].addEventListener("mouseout",pawnUnhighlight)
+        squares[arguments[0]+24].addEventListener("mouseout",pawnUnhighlight)
+        square.addEventListener("click",promotionChooser)
+         squares[arguments[0]+8].addEventListener("click",promotionChooser)
+        squares[arguments[0]+16].addEventListener("click",promotionChooser)
+        squares[arguments[0]+24].addEventListener("click",promotionChooser)
+        console.log(square.classList)
+        // if(MouseEvent===onclick){
+        //     square.classList.remove("pawn-promotion")
+        //     squares[arguments[0]+8].classList.remove("pawn-promotion")
+        //     squares[arguments[0]+16].classList.remove("pawn-promotion")
+        //     squares[arguments[0]+24].classList.remove("pawn-promotion")
+        // }
+    }
+
+    function promotionChooser(){
+       
+        console.log("promotionChooser")
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        console.log(square.classList)
+        if(parseInt(this.dataset.idy)-1===0){
+            let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+            square.classList.add("white-queen")
+        }
+        else if(parseInt(this.dataset.idy)-1===1){
+            let square = squares[8*(parseInt(this.dataset.idy)-1-1)+parseInt(this.dataset.idx)-1]
+            square.classList.add("white-knight")
+        }
+        else if(parseInt(this.dataset.idy)-1===2){
+            let square = squares[8*(parseInt(this.dataset.idy)-1-2)+parseInt(this.dataset.idx)-1]
+            square.classList.add("white-rook")
+        }
+        else if(parseInt(this.dataset.idy)-1===3){
+            let square = squares[8*(parseInt(this.dataset.idy)-1-3)+parseInt(this.dataset.idx)-1]
+            square.classList.add("white-bishop")
+        }
+        console.log(square.classList)
+
+    }
+
+    function pawnHighlight(){
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        square.classList.add("pawn-promotion")
+        console.log(square.classList)
+
+    }
+
+    function pawnUnhighlight(){
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        square.classList.remove("pawn-promotion")
+        console.log(square.classList)
+
+    }
+
+    function loadDom(){
+        createBoard() 
+        player.innerHTML=currentPlayer 
+        let squares =document.querySelectorAll(".board div") 
+        Array.from(squares).forEach(square=>{ 
+        square.addEventListener("click",clickBox)
+        })
+        playAgain.addEventListener("click",reset)
+    }
+
+    function createBoard(){
+       ("createBoard")
+       var black = false;
+        for(i=1;i<9;i++){
+            black=!black;
+            for(j=1;j<9;j++){
+                if(!black){
+                    let div =document.createElement("div") 
+                    div.setAttribute("data-idx",j) 
+                    div.setAttribute("data-idy",i) 
+                    div.className = "whiteSquare" 
+                   
+                    if(i<3){
+                        // div.classList.add("taken")  
+                     }
+                    else if(i>6){
+                        // div.classList.add("taken") 
+                    }
+                    board.appendChild(div)
+                    //console.log(div)
+                    
+                }
+                else{
+                    let div =document.createElement("div") 
+                    div.setAttribute("data-idx",j) 
+                    div.setAttribute("data-idy",i) 
+                    div.className = "blackSquare" 
+                    board.appendChild(div)
+                    //console.log(div)
+                    if(i<3){
+                        // div.classList.add("taken") 
+                     }
+                     else if(i>6){
+                        // div.classList.add("taken") 
+                    }
+                }
+                
+                black=!black;
+            }
+        }
+        createPieces()
+    }
+
+    function createPieces(){
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[0]
+        square.classList.add("black-rook")
+        squares[1].classList.add("black-knight")
+        squares[2].classList.add("black-bishop")
+        squares[3].classList.add("black-queen")
+        squares[4].classList.add("black-king")
+        squares[5].classList.add("black-bishop")
+        squares[6].classList.add("black-knight")
+        squares[7].classList.add("black-rook")
+        for(i = 8;i<16;i++){
+            squares[i].classList.add("black-pawn")
+            // squares[i].classList.add("hasnt-moved")
+        }
+        squares[56].classList.add("white-rook")
+        squares[57].classList.add("white-knight")
+        squares[58].classList.add("white-bishop")
+        squares[59].classList.add("white-queen")
+        squares[60].classList.add("white-king")
+        squares[61].classList.add("white-bishop")
+        squares[62].classList.add("white-knight")
+        squares[63].classList.add("white-rook")
+        for(i = 48;i<56;i++){
+            squares[i].classList.add("white-pawn")
+            //squares[i].classList.add("hasnt-moved")
+        }
+    }
+    function clickBox(){ 
+        console.log("clickBox called")
+
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        console.log("just selected: "+ square.classList)
+        
+        squares.forEach(square =>{
+            if(square.classList.contains("open-square")){
+                square.removeEventListener("mouseover",highlight)
+                square.removeEventListener("mouseout",unhighlight)
+            }
+            square.classList.remove("highlight-light")
+            square.classList.remove("highlight-dark")
+        })
+
+        console.log("lastSelectedPiece "+lastSelectedPiece)
+        console.log("lastSelectedLocation "+lastSelectedLocation)
+        // console.log(square.classList)
+       
+        // if(selecting){
+        //     if(square.classList.contains("open-square")){
+        //         square.classList.remove("open-square")
+        //         // square.classList.add("")
+        //     }
+        // }
+        
+        // if(blackPieces.includes(square.classList[1])){
+        //     console.log("yes, black")
+        // }
+        if(square.classList.contains("open-square")){
+            if(currentPlayer==='White'){
+                currentPlayer='Black'
+            }
+            else{
+                currentPlayer='White'
+            }
+            player.innerHTML=currentPlayer
+            if(square.classList.contains("capturable-dark")||square.classList.contains("capturable-light")){
+                        square.classList.remove(square.classList[1])
+            }
+            console.log(parseInt(this.dataset.idy))
+            //pawn promotion
+            if(lastSelectedPiece==="white-pawn"&&parseInt(this.dataset.idy)===1){
+                console.log("promoting on square "+(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1))
+                // square.classList.add("white-queen")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+8].classList.add("white-knight")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+16].classList.add("white-rook")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+24].classList.add("white-bishop")
+                // squares[arguments[0]+8].addEventListener(pawnHighlight)
+
+                pawnPromotion(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)
+                console.log("done promoting")
+                // square.classList.remove("white-queen")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+8].classList.remove("white-knight")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+16].classList.remove("white-rook")
+                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+24].classList.remove("white-bishop")
+            }
+            // console.log(lastSelectedPiece)
+            // console.log(lastSelectedLocation)
+            // square.classList.add("taken")
+            if(lastSelectedPiece==="white-king"&&lastSelectedLocation===60&&!kingOrRookMoved&&(square===squares[62]||square===squares[63])){
+                console.log("castleing kingside")
+                squares[62].classList.add("white-king")
+                squares[61].classList.add("white-rook")
+                squares[63].classList.remove("white-rook")
+                squares[60].classList.remove("white-king")
+            }
+            else if(lastSelectedPiece==="white-king"&&lastSelectedLocation===60&&!kingOrRookMoved&&(square===squares[58]||square===squares[56])){
+                console.log("castleing queenside")
+                squares[58].classList.add("white-king")
+                squares[59].classList.add("white-rook")
+                squares[56].classList.remove("white-rook")
+                squares[60].classList.remove("white-king")
+            }
+            else{
+                square.classList.add(lastSelectedPiece)
+            }
+            if(lastSelectedPiece==="white-king"||lastSelectedPiece==="white-rook"){
+                kingOrRookMoved = true;
+            }
+        
+            // squares[lastSelectedLocation].classList.remove("taken")
+            squares[lastSelectedLocation].classList.remove(lastSelectedPiece)
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                    square.classList.remove("castleable-dark")
+                    square.classList.remove("castleable-light")
+                }
+            });
+        
+            
+        }
+        // else if(square.classList.contains("black,")){
+        //     console.log("we did it")
+        // }
+        else if(square.classList.contains("white-pawn")){
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+
+                }
+            });
+            // console.log("selecting white pawn")
+            if(!allPieces.includes(squares[(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)-8].classList[1])){
+                squares[(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)-8].classList.add("open-square")
+                if(parseInt(this.dataset.idy)===7&&!allPieces.includes(squares[(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)-16].classList[1])){
+                    squares[(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)-16].classList.add("open-square")
+                }
+            }
+            if(blackPieces.includes(squares[(8*(parseInt(this.dataset.idy)-1-1)+parseInt(this.dataset.idx)-1+1)].classList[1])){
+                squares[(8*(parseInt(this.dataset.idy)-1-1)+parseInt(this.dataset.idx)-1)+1].classList.add("open-square")
+            }
+            if(blackPieces.includes(squares[(8*(parseInt(this.dataset.idy)-1-1)+parseInt(this.dataset.idx)-1-1)].classList[1])){
+                squares[(8*(parseInt(this.dataset.idy)-1-1)+parseInt(this.dataset.idx)-1)-1].classList.add("open-square")
+            }
+            // if(square.classList.contains("hasnt-moved")){
+            //     squares[(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)-16].classList.add("open-square")
+            // }
+        }
+        else if(square.classList.contains("white-knight")){
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                }
+            });
+            x=(parseInt(this.dataset.idx)-1+2)
+            y=(parseInt(this.dataset.idy)-1-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1+2)
+            y=(parseInt(this.dataset.idy)-1+1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-2)
+            y=(parseInt(this.dataset.idy)-1-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-2)
+            y=(parseInt(this.dataset.idy)-1+1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            
+            x=(parseInt(this.dataset.idx)-1+1)
+            y=(parseInt(this.dataset.idy)-1+2)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1+1)
+            y=(parseInt(this.dataset.idy)-1-2)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-1)
+            y=(parseInt(this.dataset.idy)-1+2)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-1)
+            y=(parseInt(this.dataset.idy)-1-2)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+        }
+        else if(square.classList.contains("white-bishop")){
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                }
+            });
+            var i = 1
+            var j = 1
+            var flag=true
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1-j)
+                //console.log(whitePieces.includes(squares[(8*(y))+x]))
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1+j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1-j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1+j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+        }
+        else if(square.classList.contains("white-rook")){
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1)
+                y=(parseInt(this.dataset.idy)-1+i)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1)
+                y=(parseInt(this.dataset.idy)-1-i)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+        }
+        else if(square.classList.contains("white-king")){
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                }
+            });
+            x=(parseInt(this.dataset.idx)-1)
+            y=(parseInt(this.dataset.idy)-1+1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1)
+            y=(parseInt(this.dataset.idy)-1-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1+1)
+            y=(parseInt(this.dataset.idy)-1-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1+1)
+            y=(parseInt(this.dataset.idy)-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1+1)
+            y=(parseInt(this.dataset.idy)-1+1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-1)
+            y=(parseInt(this.dataset.idy)-1-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-1)
+            y=(parseInt(this.dataset.idy)-1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            x=(parseInt(this.dataset.idx)-1-1)
+            y=(parseInt(this.dataset.idy)-1+1)
+            if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                squares[(8*(y))+x].classList.add("open-square")
+            }
+            if(!kingOrRookMoved&&!allPieces.includes(squares[61].classList[1])&&!allPieces.includes(squares[62].classList[1])){
+                squares[62].classList.add("open-square")
+                squares[63].classList.add("open-square")
+                squares[63].classList.add("castleable-dark")
+            }
+            if(!kingOrRookMoved&&!allPieces.includes(squares[59].classList[1])&&!allPieces.includes(squares[58].classList[1])&&!allPieces.includes(squares[57].classList[1])){
+                squares[58].classList.add("open-square")
+                squares[56].classList.add("open-square")
+                squares[56].classList.add("castleable-light")
+            }
+        }
+        else if(square.classList.contains("white-queen")){
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                }
+            });
+            var i = 1
+            var j = 1
+            var flag=true
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1-j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1+j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1-j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            j=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1+j)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+                j++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1+i)
+                y=(parseInt(this.dataset.idy)-1)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1-i)
+                y=(parseInt(this.dataset.idy)-1)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1)
+                y=(parseInt(this.dataset.idy)-1+i)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+            flag=true
+            i=1
+            while(flag){
+                x=(parseInt(this.dataset.idx)-1)
+                y=(parseInt(this.dataset.idy)-1-i)
+                if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
+                    squares[(8*(y))+x].classList.add("open-square")
+                    if(blackPieces.includes(squares[(8*(y))+x].classList[1])){
+                        flag=false
+                    }
+                }
+                else{
+                    flag=false
+                }
+                i++
+            }
+
+        }
+        else{
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+                }
+            });
+        }
+        squares.forEach(square =>{
+                // console.log(square.classList.contains("open-square"))
+                if(square.classList.contains("open-square")&&blackPieces.includes(square.classList[1])){
+                    if(square.classList[0]=="blackSquare"){
+                        // square.classList.remove("open-square")
+                        square.classList.add("capturable-dark")
+                    }
+                    
+                    else{
+                        // square.classList.remove("open-square")
+                        square.classList.add("capturable-light")
+                    }
+                }
+            });
+        lastSelectedPiece = square.classList[1]
+        lastSelectedLocation = 8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1
+
+        squares.forEach(square =>{
+            
+            if(square.classList.contains("open-square")){
+                square.addEventListener("mouseover",highlight)
+                square.addEventListener("mouseout",unhighlight)
+            }
+        })
+        
+        
+        
+        
+            
+        
+
+        //!square.classList.contains("open-square")||
+        // if(!square)){
+        //     squares.forEach(square =>{
+        //         if(square.classList.contains("open-square")){
+        //             square.classList.remove("open-square")
+        //         }
+        //     });
+        // }
+        
+       
+        // Array.from(squares).forEach(square=>{ 
+        //     square.addEventListener("click",selecting)
+        //     square.removeEventListener("click",clickBox)
+        // })
+    }    
+
+    function selecting(){
+        let squares =document.querySelectorAll('.board div')
+        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        if(square.classList.contains("open-square")){
+            square.classList.remove("open-square")
+            square.classList.add(lastSelectedPiece)
+            squares[lastSelectedLocation].classList.remove(lastSelectedPiece)
+            squares.forEach(square =>{
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                }
+            });
+        }
+        else{
+            
+        }
+        Array.from(squares).forEach(square=>{ 
+            square.addEventListener("click",clickBox)
+            square.removeEventListener("click",selecting)
+        })
+        // let open_squares = document.querySelectorAll("open-square")
+        // console.log(open_squares)
+//         [].forEach.call(document.querySelectorAll("open-square"),function(e){
+//   e.parentNode.removeChild(e);
+// });
+        // var open_squares = document.getElementsByClassName("open-square")
+        
+    }
+
+
+
+
+
+       //console.log(squares)
+        // console.log(parseInt(this.dataset.idx),parseInt(this.dataset.idy))
+        // console.log(square)
+        // if(!square)){ 
+        //     if(currentPlayer==='white'){ 
+        //         currentPlayer='black' 
+        //         player.innerHTML=currentPlayer
+        //         this.className="player-one taken" 
+        //        // checkWon() 
+        //      }else if(currentPlayer==='black'){ 
+        //         currentPlayer='white'
+        //         player.innerHTML=currentPlayer 
+        //         this.className="player-two taken" 
+        //         //checkWon() 
+        //     } 
+        // }else{
+        //     // alert("You cannot build on an empty space or on a space that has been built on")
+        // } 
+    
+        //the checkWon function
+    function checkWon(){
+        let squares =document.querySelectorAll(".board div")
+        for (let y=0;y<winningArray.length;y++){
+            let square =winningArray[y]
+            if(square.every(q=>squares[q].classList.contains("player-one"))){
+                setTimeout(() =>alert("player one(red) wins "), 200)
+                setTimeout(() =>restart.style.display="flex", 500)
+            }else if(square.every(q=>squares[q].classList.contains("player-two"))){
+                setTimeout(() =>alert("player two(yellow) wins"), 200)
+                setTimeout(() =>restart.style.display="flex", 500)
+            }
+        }
+    }
+
+    function reset(){
+        board.innerHTML="" 
+        loadDOM() 
+        restart.style.display="none" 
+    }
+
+</script>
+
