@@ -154,7 +154,7 @@
     
 
     function createPieces(){
-        console.log("calling createPieces")
+        // console.log("calling createPieces")
         // squares =document.querySelectorAll('.board div')
         // let square = squares[0]
         squaresMatrix[0][0].classList.add("black-rook")
@@ -170,14 +170,14 @@
             squares[i].classList.add("black-pawn")
             // squares[i].classList.add("hasnt-moved")
         }
-        squares[56].classList.add("white-rook")
-        squares[57].classList.add("white-knight")
-        squares[58].classList.add("white-bishop")
-        squares[59].classList.add("white-queen")
-        squares[60].classList.add("white-king")
-        squares[61].classList.add("white-bishop")
-        squares[62].classList.add("white-knight")
-        squares[63].classList.add("white-rook")
+        squaresMatrix[7][0].classList.add("white-rook")
+        squaresMatrix[7][1].classList.add("white-knight")
+        squaresMatrix[7][2].classList.add("white-bishop")
+        squaresMatrix[7][3].classList.add("white-queen")
+        squaresMatrix[7][4].classList.add("white-king")
+        squaresMatrix[7][5].classList.add("white-bishop")
+        squaresMatrix[7][6].classList.add("white-knight")
+        squaresMatrix[7][7].classList.add("white-rook")
         for(i = 48;i<56;i++){
             squares[i].classList.add("white-pawn")
             //squares[i].classList.add("hasnt-moved")
@@ -1953,7 +1953,7 @@
     async function blackClickBox(squareGiven){ 
         console.log("calling blackClickBox")
         // var b = squareGiven.contains(MouseEvent)
-        console.log(squareGiven.path!=null)
+        console.log(squareGiven.path==null)
         if(squareGiven.path==null){ //we were given square by AI 
             console.log("chosen by AI")         
             square = squareGiven
@@ -2296,9 +2296,8 @@
 	})
     }
 
-    async function calculateMoveWeightsForBlack(){
+    async function calculateMoveWeightsForBlack(blackAIWasChosen){
         console.log("calling calculateMoveWeightForBlack")
-        console.log("running function 'calculateMoveWeightsForBlack'")
         openSquareValues = document.getElementsByClassName("open-square")
         console.log(openSquareValues.length, " total moves to check")
             if(openSquareValues.length>0){
@@ -2338,7 +2337,10 @@
                 }
                 console.log("optimalMove = ",optimalLocationToMoveTo, " with value ",max)
                 await sleep(2)
-                blackClickBox(optimalLocationToMoveTo)
+                if(blackAIWasChosen){
+                    blackClickBox(optimalLocationToMoveTo)
+                }
+               
             }
     }
     
