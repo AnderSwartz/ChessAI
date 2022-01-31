@@ -216,6 +216,39 @@ body{
     background-position: center; */
 }
 
+.prom-white-rook{
+    content: url("pieces/w-rook.png");
+    /* background-image: url("pieces/w-rook.png");
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center; */
+   
+}
+
+.prom-white-knight{
+    content: url("pieces/w-knight.png");
+    /* background-image: url("pieces/w-knight.png");
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
+.prom-white-bishop{
+    content: url("pieces/w-bishop.png");
+    /* background-image: url("pieces/w-bishop.png");
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
+.prom-white-queen{
+    content: url("pieces/w-queen.png");
+    /* background-image: url("pieces/w-queen.png");
+    background-size: 45px;
+    background-repeat: no-repeat;
+    background-position: center; */
+}
+
 .open-square{
     background-image: url("pieces/green-dot10.png");
     background-size:45px;

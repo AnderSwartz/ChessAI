@@ -42,12 +42,17 @@
     <div class = "black-king"></div>
 </div> -->
 
-
+<h6 class = "h6"  id = "h6">
+    Check out the code for this project on <a href="https://github.com/AnderSwartz/chessAI" target = "_blank">my Github</a>
+</h6>
 </div>
 
 
+
 <script>
+    
     var squaresMatrix = new Array
+    var previouslyClickedSquare
     whiteWon = false
     blackWon = false
     let board=document.querySelector(".board") 
@@ -149,6 +154,8 @@
         }
         fillSquareMatrix()
         createPieces()
+        
+        
     }
 
     
@@ -156,7 +163,7 @@
     function createPieces(){
         // console.log("calling createPieces")
         // squares =document.querySelectorAll('.board div')
-        // let square = squares[0]
+        // let square = squaresMatrix[0][0]
         squaresMatrix[0][0].classList.add("black-rook")
         squaresMatrix[0][1].classList.add("black-knight")
         squaresMatrix[0][2].classList.add("black-bishop")
@@ -195,14 +202,11 @@
                 }
                 squaresMatrix.push(rowToAdd)
             }
+      
+        
     }
 
-    function testGlobalNessOfSquareMatrix(){
-        console.log(squaresMatrix[0][0])
-        console.log(squaresMatrix[0][1])
-        console.log(squaresMatrix[1][0])
-        console.log(squaresMatrix[1][1])
-    }
+    
     
     function whiteHighlight(){
         console.log("calling whiteHighlight")
@@ -229,9 +233,10 @@
         }
     }
 
+   
 
-
-    function whitePawnPromotion(squareIndex){
+    async function whitePawnPromotion(squareIndex){
+        console.log(squares[squareIndex])
         console.log("calling squareIndex")
         // document.addEventListener("mouseover",whitePawnPromotion)
         squares.forEach(square =>{
@@ -272,13 +277,11 @@
         // }
     }
 
-    function whitePromotionChooser(){
+    async function whitePromotionChooser(){
+        // console.log(square)
         console.log("calling whitePromotionChooser")
-        
-        //console.log("whitePromotionChooser")
-
         let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
-        //console.log(square.classList)
+    //console.log(square.classList)
         //console.log(parseInt(this.dataset.idy))
         square.classList.remove("pawn-promotion")
         if(parseInt(this.dataset.idy)-1==0){
@@ -333,6 +336,7 @@
 
         })
         isBlackKinginCheck(document.getElementsByClassName("black-king")[0])
+        return;
     }
 
     function whitePawnHighlight(){
@@ -374,6 +378,7 @@
                  square.classList.remove("highlight-light")
             }
     }
+
 
 
     function blackPawnPromotion(squareIndex){
@@ -419,7 +424,7 @@
         // }
     }
 
-    function blackPromotionChooser(){
+    async function blackPromotionChooser(){
         console.log("calling blackPromotionChooser")
         
         //console.log("blackPromotionChooser")
@@ -479,6 +484,7 @@
 
         })
         isWhiteKinginCheck(document.getElementsByClassName("white-king")[0])
+        return
     }
 
     function blackPawnHighlight(){
@@ -718,7 +724,7 @@
         //     document.getElementsByClassName("black-king")[0].classList.add("check")
         // }
         square.classList.remove("check")
-       
+        
         //     square.classList.contains("capturable-light")
         // ||square.classList.contains("capturable-dark"
         if(square.classList.contains("open-square")){
@@ -739,8 +745,6 @@
             // square.classList.remove("castleable-dark")
         })
 
-
-        
     }
 
     function isWhiteKinginCheck(square){
@@ -831,40 +835,9 @@
         })
     }
 
-    function whiteClickBox(){ 
-        console.log("calling whiteClickBox")
-        selectingPieceWhite=true
-        // //console.log("whiteClickBox called")
-        let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
-       
-        //console.log("just selected: "+ square.classList)
-        //console.log(squares[63].value)
-        square.value = 4;
-        // //console.log(square.value)
-        squares.forEach(square =>{
-            if(square.classList.contains("open-square")){
-                square.removeEventListener("mouseover",whiteHighlight)
-                square.removeEventListener("mouseout",whiteUnhighlight)
-            }
-            square.classList.remove("highlight-light")
-            square.classList.remove("highlight-dark")
-        })
-        //console.log("whiteLastSelectedPiece "+whiteLastSelectedPiece)
-        //console.log("whiteLastSelectedLocation "+whiteLastSelectedLocation)
-        // //console.log(square.classList)
-       
-        // if(selecting){
-        //     if(square.classList.contains("open-square")){
-        //         square.classList.remove("open-square")
-        //         // square.classList.add("")
-        //     }
-        // }
-        
-        // if(blackPieces.includes(square.classList[1])){
-        //     //console.log("yes, black")
-        // }
-        if(square.classList.contains("open-square")){
-            selectingPieceWhite=false
+    async function whiteMoving(square){
+
+        selectingPieceWhite=false
             if(square.classList.contains("black-en-passant-pawn")){
                 square.classList.remove("black-pawn")
             }
@@ -876,19 +849,19 @@
             // //console.log(whiteLastSelectedPiece)
             // //console.log(whiteLastSelectedLocation)
             // square.classList.add("taken")
-            if(whiteLastSelectedPiece==="white-king"&&!whiteKingOrRookMoved&&(square===squares[62]||square===squares[63])){
+            if(whiteLastSelectedPiece==="white-king"&&!whiteKingOrRookMoved&&(square===squaresMatrix[7][6]||square===squaresMatrix[7][7])){
                 //console.log("castleing kingside")
-                squares[62].classList.add("white-king")
-                squares[61].classList.add("white-rook")
-                squares[63].classList.remove("white-rook")
-                squares[60].classList.remove("white-king")
+                squaresMatrix[7][6].classList.add("white-king")
+                squaresMatrix[7][5].classList.add("white-rook")
+                squaresMatrix[7][7].classList.remove("white-rook")
+                squaresMatrix[7][4].classList.remove("white-king")
             }
-            else if(whiteLastSelectedPiece==="white-king"&&!whiteKingOrRookMoved&&(square===squares[58]||square===squares[56])){
+            else if(whiteLastSelectedPiece==="white-king"&&!whiteKingOrRookMoved&&(square===squaresMatrix[7][2]||square===squares[56])){
                 //console.log("castleing queenside")
-                squares[58].classList.add("white-king")
-                squares[59].classList.add("white-rook")
+                squaresMatrix[7][2].classList.add("white-king")
+                squaresMatrix[7][3].classList.add("white-rook")
                 squares[56].classList.remove("white-rook")
-                squares[60].classList.remove("white-king")
+                squaresMatrix[7][4].classList.remove("white-king")
             }
             else{
                 square.classList.add(whiteLastSelectedPiece)
@@ -899,6 +872,10 @@
            
             // squares[whiteLastSelectedLocation].classList.remove("taken")
             squares[whiteLastSelectedLocation].classList.remove(whiteLastSelectedPiece)
+            // square.classList.remove(check)
+            // if( squares[whiteLastSelectedLocation].classList.contains(check)){
+                squares[whiteLastSelectedLocation].classList.remove("check")
+            // }
             squares.forEach(square =>{
                 square.classList.remove("selecting-dark")        
                 square.classList.remove("selecting-light")
@@ -918,35 +895,36 @@
                 }
             });
             //en passant candidates
-            if(whiteLastSelectedPiece==="white-pawn"&&whiteLastSelectedLocation-16===(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)){
+            if(whiteLastSelectedPiece==="white-pawn"&&whiteLastSelectedLocation-16===(8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1)){
                 square.classList.add("white-en-passant-pawn")
             }
              //capturing en passant
              if(square.classList.contains("white-en-passant-square")){
-                squares[8*(parseInt(this.dataset.idy)-1+1)+parseInt(this.dataset.idx)-1].classList.remove("black-pawn")
-                squares[8*(parseInt(this.dataset.idy)-1+1)+parseInt(this.dataset.idx)-1].classList.remove("black-en-passant-pawn")
-                // squares[8*(parseInt(this.dataset.idy)-1+1)+parseInt(this.dataset.idx)-1].classList.remove("capturable-light")
-                // squares[8*(parseInt(this.dataset.idy)-1+1)+parseInt(this.dataset.idx)-1].classList.remove("capturable-dark")
+                squares[8*(parseInt(square.dataset.idy)-1+1)+parseInt(square.dataset.idx)-1].classList.remove("black-pawn")
+                squares[8*(parseInt(square.dataset.idy)-1+1)+parseInt(square.dataset.idx)-1].classList.remove("black-en-passant-pawn")
+                // squares[8*(parseInt(square.dataset.idy)-1+1)+parseInt(square.dataset.idx)-1].classList.remove("capturable-light")
+                // squares[8*(parseInt(square.dataset.idy)-1+1)+parseInt(square.dataset.idx)-1].classList.remove("capturable-dark")
                 square.classList.remove("white-en-passant-square")
             }
             
 
 
             //pawn promotion
-            if(whiteLastSelectedPiece==="white-pawn"&&parseInt(this.dataset.idy)===1){
-                //console.log("promoting on square "+(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1))
+            if(whiteLastSelectedPiece==="white-pawn"&&parseInt(square.dataset.idy)===1){
+                //console.log("promoting on square "+(8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1))
                 // square.classList.add("white-queen")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+8].classList.add("white-knight")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+16].classList.add("white-rook")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+24].classList.add("white-bishop")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+8].classList.add("white-knight")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+16].classList.add("white-rook")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+24].classList.add("white-bishop")
                 // squares[arguments[0]+8].addEventListener(pawnHighlight)
                 square.classList.remove("white-pawn")
-                whitePawnPromotion(8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1)
+                whitePawnPromotion(8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1)
+                await whitePromotionChooser()
                 //console.log("done promoting")
                 // square.classList.remove("white-queen")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+8].classList.remove("white-knight")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+16].classList.remove("white-rook")
-                // squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1+24].classList.remove("white-bishop")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+8].classList.remove("white-knight")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+16].classList.remove("white-rook")
+                // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+24].classList.remove("white-bishop")
             }
             if(currentPlayer==="White's turn"){
                 currentPlayer="Black's turn"
@@ -976,92 +954,75 @@
                 document.getElementsByClassName("white-king")[0].classList.remove("check")
             }
             
+    }
+
+    
+
+    function whiteClickBox(){ 
+        console.log("calling whiteClickBox")
+        selectingPieceWhite=true
+        // //console.log("whiteClickBox called")
+        // console.log(this.square)
+        let square = squaresMatrix[parseInt(this.dataset.idy-1)][parseInt(this.dataset.idx-1)]
+       
+        // let square = squares[8*(parseInt(this.dataset.idy)-1)+parseInt(this.dataset.idx)-1]
+        
+        //console.log("just selected: "+ square.classList)
+        //console.log(squaresMatrix[7][7].value)
+        square.value = 4; //why?
+        // //console.log(square.value)
+        squares.forEach(square =>{
+            if(square.classList.contains("open-square")){
+                square.removeEventListener("mouseover",whiteHighlight)
+                square.removeEventListener("mouseout",whiteUnhighlight)
+            }
+            square.classList.remove("highlight-light")
+            square.classList.remove("highlight-dark")
+        })
+        //console.log("whiteLastSelectedPiece "+whiteLastSelectedPiece)
+        //console.log("whiteLastSelectedLocation "+whiteLastSelectedLocation)
+        // //console.log(square.classList)
+       
+        // if(selecting){
+        //     if(square.classList.contains("open-square")){
+        //         square.classList.remove("open-square")
+        //         // square.classList.add("")
+        //     }
+        // }
+        
+        // if(blackPieces.includes(square.classList[1])){
+        //     //console.log("yes, black")
+        // }
+        if(square.classList.contains("open-square")){
+            whiteMoving(square) 
         }
         // else if(square.classList.contains("black,")){
         //     //console.log("we did it")
         // }
         else if(square.classList.contains("white-pawn")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-                    square.classList.remove("white-en-passant-square")
-                }square.classList.remove("white-en-passant-pawn")
-            });
+            removeWhiteSelections()
             whitePawn(square)
         }
         else if(square.classList.contains("white-knight")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("white-en-passant-square")
-                }square.classList.remove("white-en-passant-pawn")
-            });
+            removeWhiteSelections()
             whiteKnight(square)
         }
         else if(square.classList.contains("white-bishop")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-                    square.classList.remove("white-en-passant-square")
-                }square.classList.remove("white-en-passant-pawn")
-            });
+            removeWhiteSelections()
             whiteBishop(square)
         }
         else if(square.classList.contains("white-rook")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("white-en-passant-square")
-                }square.classList.remove("white-en-passant-pawn")
-            });
+            removeWhiteSelections()
             whiteRook(square)
 
         }
         else if(square.classList.contains("white-king")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("white-en-passant-square")
-                }
-            });
+            removeWhiteSelections()
             whiteKing(square)
 
         }
         else if(square.classList.contains("white-queen")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("white-en-passant-square")
-                }square.classList.remove("white-en-passant-pawn")
-            });
+            removeWhiteSelections()
             whiteQueen(square)
         }
         else{
@@ -1072,7 +1033,6 @@
                     square.classList.remove("open-square")
                     square.classList.remove("capturable-dark")
                     square.classList.remove("capturable-light")
-
                 }
             });
         }
@@ -1093,6 +1053,8 @@
         })  
         
         if(selectingPieceWhite){
+            console.log("YES SELECTING PIECE")
+            console.log(whiteLastSelectedPiece)
             if(document.getElementsByClassName("white-king")[0].classList.contains("check")){
                 doesMoveHangWhiteKing(true)
             }
@@ -1100,9 +1062,10 @@
                 doesMoveHangWhiteKing(false)
             }
             blackPiecesToCapture()
-            if(!whiteLastSelectedPiece=="white-king"){
+            if(whiteLastSelectedPiece!="white-king"){
+                console.log("SHOULD BE REMOVING CASTLEABLE")
                 //console.log("not selecting white King, so deleting castles")
-                squares[63].classList.remove("castleable-dark")
+                squaresMatrix[7][7].classList.remove("castleable-dark")
                 squares[56].classList.remove("castleable-light")
             }
             if(whitePieces.includes(square.classList[1])){
@@ -1125,16 +1088,45 @@
 
         if(!selectingPieceWhite){
             //console.log("white just moved, so clearing castles")
-            squares[63].classList.remove("castleable-dark")
+            squaresMatrix[7][7].classList.remove("castleable-dark")
             squares[56].classList.remove("castleable-light")
         }
-        squares[0].classList.remove("castleable-dark")
-        squares[7].classList.remove("castleable-light")
+        squaresMatrix[0][0].classList.remove("castleable-dark")
+        squaresMatrix[0][7].classList.remove("castleable-light")
        
         // blackPiecesToCapture()
         if(whiteWon){
                 whiteWins()
         }
+    }
+
+    function removeWhiteSelections(){
+        squares.forEach(square =>{
+                square.classList.remove("selecting-dark")        
+                square.classList.remove("selecting-light")
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+
+                    square.classList.remove("white-en-passant-square")
+                }square.classList.remove("white-en-passant-pawn")
+                
+        })
+    }
+
+    function removeBlackSelections(){
+        squares.forEach(square =>{
+                square.classList.remove("selecting-dark")        
+                square.classList.remove("selecting-light")
+                if(square.classList.contains("open-square")){
+                    square.classList.remove("open-square")
+                    square.classList.remove("capturable-dark")
+                    square.classList.remove("capturable-light")
+
+                    square.classList.remove("black-en-passant-square")
+                }square.classList.remove("black-en-passant-pawn")
+        })
     }
 
 
@@ -1234,7 +1226,7 @@
         }
         else{
         //console.log("not king")
-        squares[63].classList.remove("castleable-dark")
+        squaresMatrix[7][7].classList.remove("castleable-dark")
         squares[56].classList.remove("castleable-light")
         }
             
@@ -1578,14 +1570,14 @@
         if(x>-1&&x<8&&y>-1&&y<8&&!whitePieces.includes(squares[(8*(y))+x].classList[1])){
             squares[(8*(y))+x].classList.add("open-square")
         }
-        if(!whiteKingOrRookMoved&&!allPieces.includes(squares[61].classList[1])&&!allPieces.includes(squares[62].classList[1])){
-            squares[62].classList.add("open-square")
-            squares[63].classList.add("open-square")
-            squares[63].classList.add("castleable-dark")
+        if(!whiteKingOrRookMoved&&!allPieces.includes(squaresMatrix[7][5].classList[1])&&!allPieces.includes(squaresMatrix[7][6].classList[1])){
+            squaresMatrix[7][6].classList.add("open-square")
+            squaresMatrix[7][7].classList.add("open-square")
+            squaresMatrix[7][7].classList.add("castleable-dark")
             //console.log("adding castleable")
         }
-        if(!whiteKingOrRookMoved&&!allPieces.includes(squares[59].classList[1])&&!allPieces.includes(squares[58].classList[1])&&!allPieces.includes(squares[57].classList[1])){
-            squares[58].classList.add("open-square")
+        if(!whiteKingOrRookMoved&&!allPieces.includes(squaresMatrix[7][3].classList[1])&&!allPieces.includes(squaresMatrix[7][2].classList[1])&&!allPieces.includes(squaresMatrix[7][1].classList[1])){
+            squaresMatrix[7][2].classList.add("open-square")
             squares[56].classList.add("open-square")
             squares[56].classList.add("castleable-light")
         }
@@ -1814,6 +1806,7 @@
     function whitePiecesToCapture(){
         console.log("calling whitePiecesToCapture")
         squares.forEach(square =>{
+     
             // //console.log(square.classList.contains("open-square"))
             if(square.classList.contains("open-square")&&(whitePieces.includes(square.classList[1])
             ||square.classList[1]=="white-en-passant-pawn")){
@@ -1821,7 +1814,6 @@
                     // square.classList.remove("open-square")
                     square.classList.add("capturable-dark")
                 }
-                
                 else{
                     // square.classList.remove("open-square")
                     square.classList.add("capturable-light")
@@ -1830,7 +1822,7 @@
         });
     }   
     
-    function blackMoving(square){
+    async function blackMoving(square){
         console.log("calling blackMoving")
         selectingPieceBlack=false
             if(square.classList.contains("white-en-passant-pawn")){
@@ -1843,19 +1835,19 @@
             // //console.log(blackLastSelectedPiece)
             // //console.log(blackLastSelectedLocation)
             // square.classList.add("taken")
-            if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squares[6]||square===squares[7])){
+            if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squaresMatrix[0][6]||square===squaresMatrix[0][7])){
                 //console.log("castleing kingside")
-                squares[6].classList.add("black-king")
-                squares[5].classList.add("black-rook")
-                squares[7].classList.remove("black-rook")
-                squares[4].classList.remove("black-king")
+                squaresMatrix[0][6].classList.add("black-king")
+                squaresMatrix[0][5].classList.add("black-rook")
+                squaresMatrix[0][7].classList.remove("black-rook")
+                squaresMatrix[0][4].classList.remove("black-king")
             }
-            else if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squares[2]||square===squares[0])){
+            else if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squaresMatrix[0][2]||square===squaresMatrix[0][0])){
                 //console.log("castleing queenside")
-                squares[2].classList.add("black-king")
-                squares[3].classList.add("black-rook")
-                squares[0].classList.remove("black-rook")
-                squares[4].classList.remove("black-king")
+                squaresMatrix[0][2].classList.add("black-king")
+                squaresMatrix[0][3].classList.add("black-rook")
+                squaresMatrix[0][0].classList.remove("black-rook")
+                squaresMatrix[0][4].classList.remove("black-king")
             }
             else{
                 square.classList.add(blackLastSelectedPiece)
@@ -1879,7 +1871,7 @@
                     // if(square.classList[1]=="white-pawn"){
                     //     square.classList.remove(square.classList[1])
                     // }
-                    square.classList.remove("white-pawn")
+                    // square.classList.remove("white-pawn")
                     square.classList.remove("castleable-dark")
                     square.classList.remove("castleable-light")
                     // if(whitePieces.includes(square.classList[1])){
@@ -1897,6 +1889,7 @@
                 // squares[arguments[0]+8].addEventListener(pawnHighlight)
                 square.classList.remove("black-pawn")
                 blackPawnPromotion(8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1)
+                await blackPromotionChooser()
                 //console.log("done promoting")
                 // square.classList.remove("black-queen")
                 // squares[8*(parseInt(square.dataset.idy)-1)+parseInt(square.dataset.idx)-1+8].classList.remove("black-knight")
@@ -2003,19 +1996,19 @@
             // // //console.log(blackLastSelectedPiece)
             // // //console.log(blackLastSelectedLocation)
             // // square.classList.add("taken")
-            // if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squares[6]||square===squares[7])){
+            // if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squaresMatrix[0][6]||square===squaresMatrix[0][7])){
             //     //console.log("castleing kingside")
-            //     squares[6].classList.add("black-king")
-            //     squares[5].classList.add("black-rook")
-            //     squares[7].classList.remove("black-rook")
-            //     squares[4].classList.remove("black-king")
+            //     squaresMatrix[0][6].classList.add("black-king")
+            //     squaresMatrix[0][5].classList.add("black-rook")
+            //     squaresMatrix[0][7].classList.remove("black-rook")
+            //     squaresMatrix[0][4].classList.remove("black-king")
             // }
-            // else if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squares[2]||square===squares[0])){
+            // else if(blackLastSelectedPiece==="black-king"&&blackLastSelectedLocation===4&&!blackKingOrRookMoved&&(square===squaresMatrix[0][2]||square===squaresMatrix[0][0])){
             //     //console.log("castleing queenside")
-            //     squares[2].classList.add("black-king")
-            //     squares[3].classList.add("black-rook")
-            //     squares[0].classList.remove("black-rook")
-            //     squares[4].classList.remove("black-king")
+            //     squaresMatrix[0][2].classList.add("black-king")
+            //     squaresMatrix[0][3].classList.add("black-rook")
+            //     squaresMatrix[0][0].classList.remove("black-rook")
+            //     squaresMatrix[0][4].classList.remove("black-king")
             // }
             // else{
             //     square.classList.add(blackLastSelectedPiece)
@@ -2111,88 +2104,28 @@
         }
         
         else if(square.classList.contains("black-pawn")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            
             blackPawn(square)
         }
         else if(square.classList.contains("black-knight")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            removeBlackSelections()
             blackKnight(square)
             
         }
         else if(square.classList.contains("black-bishop")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            removeBlackSelections()
             blackBishop(square)
         }
         else if(square.classList.contains("black-rook")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            removeBlackSelections()
             blackRook(square)
         }
         else if(square.classList.contains("black-king")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            removeBlackSelections()
             blackKing(square)
         }
         else if(square.classList.contains("black-queen")){
-            squares.forEach(square =>{
-                square.classList.remove("selecting-dark")        
-                    square.classList.remove("selecting-light")
-                if(square.classList.contains("open-square")){
-                    square.classList.remove("open-square")
-                    square.classList.remove("capturable-dark")
-                    square.classList.remove("capturable-light")
-
-                    square.classList.remove("black-en-passant-square")
-                }square.classList.remove("black-en-passant-pawn")
-            });
+            removeBlackSelections()
             blackQueen(square) 
         }
         else{
@@ -2203,7 +2136,6 @@
                     square.classList.remove("open-square")
                     square.classList.remove("capturable-dark")
                     square.classList.remove("capturable-light")
-
                 }
             });
 
@@ -2245,9 +2177,11 @@
             else{
                 doesMoveHangBlackKing(false)
             }
-            if(!blackLastSelectedPiece=="black-king"){
-                squares[0].classList.remove("castleable-dark")
-                squares[7].classList.remove("castleable-light")
+            whitePiecesToCapture()
+            if(blackLastSelectedPiece!="black-king"){
+                // console.log("SHOULD BE REMOVING CASTLEABLE")
+                squaresMatrix[0][0].classList.remove("castleable-dark")
+                squaresMatrix[0][7].classList.remove("castleable-light")
             }
             if(blackPieces.includes(square.classList[1])){
                 if(square.classList.contains("blackSquare")){
@@ -2274,10 +2208,10 @@
 
 
         if(!selectingPieceBlack){
-            squares[0].classList.remove("castleable-dark")
-            squares[7].classList.remove("castleable-light")
+            squaresMatrix[0][0].classList.remove("castleable-dark")
+            squaresMatrix[0][7].classList.remove("castleable-light")
         }
-        squares[63].classList.remove("castleable-dark")
+        squaresMatrix[7][7].classList.remove("castleable-dark")
         squares[56].classList.remove("castleable-light")
 
         if(blackWon){
@@ -2287,6 +2221,10 @@
 
        
     } 
+
+
+    
+
     function sleep(duration) {
         console.log("calling sleep")
 	return new Promise(resolve => {
@@ -2336,7 +2274,7 @@
                     }
                 }
                 console.log("optimalMove = ",optimalLocationToMoveTo, " with value ",max)
-                await sleep(2)
+                await sleep(5)
                 if(blackAIWasChosen){
                     blackClickBox(optimalLocationToMoveTo)
                 }
@@ -2508,8 +2446,8 @@
         }
         else{
         //console.log("not king")
-        squares[0].classList.remove("castleable-dark")
-        squares[7].classList.remove("castleable-white")
+        squaresMatrix[0][0].classList.remove("castleable-dark")
+        squaresMatrix[0][7].classList.remove("castleable-white")
         }
         // whitePiecesToCapture()
 
@@ -2833,15 +2771,15 @@
         if(x>-1&&x<8&&y>-1&&y<8&&!blackPieces.includes(squares[(8*(y))+x].classList[1])){
             squares[(8*(y))+x].classList.add("open-square")
         }
-        if(!blackKingOrRookMoved&&!allPieces.includes(squares[5].classList[1])&&!allPieces.includes(squares[6].classList[1])){
-            squares[6].classList.add("open-square")
-            squares[7].classList.add("open-square")
-            squares[7].classList.add("castleable-light")
+        if(!blackKingOrRookMoved&&!allPieces.includes(squaresMatrix[0][5].classList[1])&&!allPieces.includes(squaresMatrix[0][6].classList[1])){
+            squaresMatrix[0][6].classList.add("open-square")
+            squaresMatrix[0][7].classList.add("open-square")
+            squaresMatrix[0][7].classList.add("castleable-light")
         }
-        if(!blackKingOrRookMoved&&!allPieces.includes(squares[3].classList[1])&&!allPieces.includes(squares[2].classList[1])&&!allPieces.includes(squares[1].classList[1])){
-            squares[2].classList.add("open-square")
-            squares[0].classList.add("open-square")
-            squares[0].classList.add("castleable-dark")
+        if(!blackKingOrRookMoved&&!allPieces.includes(squaresMatrix[0][3].classList[1])&&!allPieces.includes(squaresMatrix[0][2].classList[1])&&!allPieces.includes(squaresMatrix[0][1].classList[1])){
+            squaresMatrix[0][2].classList.add("open-square")
+            squaresMatrix[0][0].classList.add("open-square")
+            squaresMatrix[0][0].classList.add("castleable-dark")
         }
     }
 
