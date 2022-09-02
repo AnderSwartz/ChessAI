@@ -1029,6 +1029,8 @@
                 else{
                     document.getElementsByClassName("white-king")[0].classList.remove("check")
                 }
+
+                square.addEventListener("click",whitePawn)
             }
             whiteIsPromoting = false
             
@@ -1352,6 +1354,8 @@
         })
 
     }
+
+    
 
 
     //using the argument is only necessary for isblackkingincheck
