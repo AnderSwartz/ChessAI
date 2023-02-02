@@ -1,7 +1,7 @@
 
 var globalDepth = prompt("Enter a value to use for the depth of the AI (3 or 4 is recommended)", "1");
-
-
+document.getElementById('total positions').innerText = "-"    
+document.getElementById('total time').innerText = "-"
 
 //User can press Enter at any time to move the AI with the player whose turn it is.
 document.addEventListener("keypress", function onPress(event) {
@@ -46,10 +46,7 @@ var piecesAttackingKing = []
 var squares
 var x
 var y
-var blackPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king"]
-var whitePieces = ["white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
-var allPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king",
-"white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
+
 const vars = {
     whiteLastSelectedPiece,
     blackLastSelectedPiece,
@@ -74,13 +71,7 @@ document.addEventListener("DOMContentLoaded",loadDom)
 
 
 
-//useful squares for evaluation function
-var centerSquares = [27,28,35,36]
-var edges = [0,7,15,23,31,39,47,55,63,0,8,16,24,32,40,48,56,1,2,3,
-4,5,6,56,57,58,59,60,61,62]
-var fianchettoSquares = [9,14,49,54]
-var blackStartSquares = [0,1,2,3,4,5,6,7]
-var whiteStartSquares = [57,58,59,60,61,62,63]
+
 
 
 // function setUpAttackers(){

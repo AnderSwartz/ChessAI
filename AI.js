@@ -1,7 +1,7 @@
-
 //uses AI to move for a chosen color
 function colorAI(color){
     console.log("moving",color,"with AI")
+    var startTime = performance.now()
     totalMoves = 0
     // let moves = allPossibleColorMoves(color)
     // console.log(moves[0])
@@ -18,177 +18,10 @@ function colorAI(color){
 
     // checkForDraw()
     console.log("TOTAL MOVES =",totalMoves)
-    document.getElementById('replace-me').innerText = totalMoves    
+    document.getElementById('total positions').innerText = totalMoves    
+    endTime = performance.now()
+    document.getElementById('total time').innerText = (endTime - startTime).toFixed(3)
 }
-
-
-function evaluate(){
-    score = 0
-    
-    //accounting for material
-    score+=document.querySelectorAll('[piece="white-pawn"').length
-    score+= document.querySelectorAll('[piece="white-knight"').length*3
-    score+=document.querySelectorAll('[piece="white-bishop"').length*3
-    score+=document.querySelectorAll('[piece="white-rook"').length*5
-    score+=document.querySelectorAll('[piece="white-queen"').length*9
-
-    score-=document.querySelectorAll('[piece="black-pawn"').length
-    score-= document.querySelectorAll('[piece="black-knight"').length*3
-    score-=document.querySelectorAll('[piece="black-bishop"').length*3
-    score-=document.querySelectorAll('[piece="black-rook"').length*5
-    score-=document.querySelectorAll('[piece="black-queen"').length*9
-    score+=document.querySelectorAll('[piece="white-king"').length*Number.MAX_SAFE_INTEGER
-    score-=document.querySelectorAll('[piece="black-king"').length*Number.MAX_SAFE_INTEGER
-
-    
-
-    //points for having a piece in the center, extra points if its a pawn
-    centerSquares.forEach(id=>{
-        // console.log(squares)
-        if(whitePieces.includes(squares[id].getAttribute("piece"))){
-            score+=.25
-            if(squares[id].getAttribute("piece")=="white-pawn"){
-                score+=.25
-            }
-        }
-        else if(blackPieces.includes(squares[id].getAttribute("piece"))){
-            score-=.25
-            if(squares[id].getAttribute("piece")=="black-pawn"){
-                score-=.25
-            }
-        }
-    })
-
-    //penalty for having a knight on the edge of the board
-    document.querySelectorAll('[piece="white-knight"]').forEach(knight=>{
-        if(edges.includes(knight.dataset.idx-1+(knight.dataset.idy-1)*8)){
-            score-=.10
-        }
-    })
-    document.querySelectorAll('[piece="black-knight"]').forEach(knight=>{
-        if(edges.includes(knight.dataset.idx-1+(knight.dataset.idy-1)*8)){
-            score+=.10
-        }
-    })
-
-    //points for fianchettoing a bishop
-    fianchettoSquares.forEach(id=>{
-        if("white-bishop" == squares[id].getAttribute("piece")){
-            // score+=.5*vars[color+"Weight"]
-            score+=.10
-        }
-        else if("black-bishop" == squares[id].getAttribute("piece")){
-            score-=.10
-        }
-    })
-
-
-    //penality for having pieces on original squares (meant to encourage developing pieces during the opening)
-    // whiteStartSquares.forEach(id=>{
-    //     // console.log(squares[id].getAttribute("piece").substring(0,5))
-    //     if("white" == squares[id].getAttribute("piece").substring(0,5)){
-    //         // score+=.5*vars[color+"Weight"]
-    //         score-=.05
-    //     }
-    // })
-
-    // blackStartSquares.forEach(id=>{
-    //     if("black" == squares[id].getAttribute("piece").substring(0,5)){
-    //         // score+=.5*vars[color+"Weight"]
-    //         score+=.05
-    //     }
-    // })
-
-    // ks = kingSafety("white")
-    score+=kingSafety("white")
-    score-=kingSafety("black")
-
-    // console.log(ks)
-    // score-= kingSafety("black")
-
-    //castled?
-
-    //whiteJustCastled
-    // if(whiteCastleableKS==true&&squares[62].getAttribute("piece")=="white-king"&&squares[61].getAttribute("piece")=="white-rook"){
-    //     console.log("evaluated whitecastleKS")
-    //     score+=50
-    // }
-    // else if(whiteCastleableQS==true&&squares[58].getAttribute("piece")=="white-king"&&squares[59].getAttribute("piece")=="white-rook"){
-    //     score+=.5
-    // }
-    // else if(blackCastleableQS==true&&squares[3].getAttribute("piece")=="black-king"&&squares[4].getAttribute("piece")=="black-rook"){
-    //     score-=.5
-    // }
-    // else if(blackCastleableKS==true&&squares[6].getAttribute("piece")=="black-king"&&squares[5].getAttribute("piece")=="black-rook"){
-    //     score-=.5
-    // }
-    // console.log(score)
-
-
-    return score
-
-}
-
-function kingSafety(color){
-    // return 0
-    var KSscore = 0
-    if(color=="white"){
-        king = document.querySelector(`[piece="white-king"]`)
-        kingIdx = king.dataset.idx-1
-        kingIdy = king.dataset.idy-1
-        // console.log(kingIdx)
-        // console.log(kingIdy)
-        // console.log(squaresMatrix[kingIdy-1][kingIdx+1])
-        // console.log(squaresMatrix[7][4])
-        // kingsPawns = []
-
-        //points for having pawns directly in front of the king or in front and to the side
-        if(kingIdx+1<8&&squaresMatrix[kingIdy-1][kingIdx+1].getAttribute("piece")=="white-pawn"){
-            KSscore+=.1
-        }
-        if(squaresMatrix[kingIdy-1][kingIdx].getAttribute("piece")=="white-pawn"){
-            KSscore+=.1
-        }
-        if(kingIdx-1>-1&&squaresMatrix[kingIdy-1][kingIdx-1].getAttribute("piece")=="white-pawn"){
-            KSscore+=.1
-        }
-        //points if the king is in a square as as a consequence of castling (meant to encourage castling)
-        if(kingIdx<=2|kingIdx>=6)
-            KSscore+=.25
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx+1])
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx])
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx-1])
-    }
-    else{
-        king = document.querySelector(`[piece="black-king"]`)
-        kingIdx = king.dataset.idx-1
-        kingIdy = king.dataset.idy-1
-        // console.log(kingIdx)
-        // console.log(kingIdy)
-        // console.log(squaresMatrix[kingIdy-1][kingIdx+1])
-        // console.log(squaresMatrix[7][4])
-        // kingsPawns = []
-        if(kingIdx+1<8&&squaresMatrix[kingIdy+1][kingIdx+1].getAttribute("piece")=="black-pawn"){
-            KSscore+=.1
-        }
-        if(squaresMatrix[kingIdy+1][kingIdx].getAttribute("piece")=="black-pawn"){
-            KSscore+=.1
-        }
-        if(kingIdx-1>-1&&squaresMatrix[kingIdy+1][kingIdx-1].getAttribute("piece")=="black-pawn"){
-            KSscore+=.1
-        }
-        if(kingIdx<=2|kingIdx>=6)
-            KSscore+=.25
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx+1])
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx])
-        // kingsPawns.push(squaresMatrix[kingIdy-1][kingIdx-1])
-    }
-    // console.log("KSscore=",KSscore)
-    return KSscore
-    
-}
-
-
 
 function sortMoves(moves,color,oppositeColor){
     moves.forEach(move=>{
