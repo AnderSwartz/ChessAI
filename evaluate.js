@@ -55,7 +55,6 @@ function evaluate(){
 
     //points for having a piece in the center, extra points if its a pawn
     centerSquares.forEach(id=>{
-        // console.log(squares)
         if(whitePieces.includes(squares[id].getAttribute("piece"))){
             score+=.25
             if(squares[id].getAttribute("piece")=="white-pawn"){

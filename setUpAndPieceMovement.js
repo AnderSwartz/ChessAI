@@ -30,11 +30,15 @@ var blackLastSelectedLocation = ""
 var whiteLastSelectedPiece = ""
 var whiteLastSelectedLocation = ""
 
+
 var squareswhiteCanAttack
 var squaresblackCanAttack
 
 var blackCastleableQS = true
 var blackCastleableKS = true
+
+var blackPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king"]
+var whitePieces = ["white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
 
 var whiteCastleableQS= true
 var whiteCastleableKS= true
