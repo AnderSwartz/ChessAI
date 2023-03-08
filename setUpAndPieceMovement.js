@@ -39,6 +39,8 @@ var blackCastleableKS = true
 
 var blackPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king"]
 var whitePieces = ["white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
+var allPieces = ["black-pawn","black-bishop","black-knight","black-rook","black-queen","black-king",
+"white-pawn","white-bishop","white-knight","white-rook","white-queen","white-king"]
 
 var whiteCastleableQS= true
 var whiteCastleableKS= true
@@ -69,6 +71,19 @@ const vars = {
     whiteWeight,
     blackWeight
 }
+
+
+//useful squares for evaluation function
+var centerSquares = [27,28,35,36]
+var edges = [0,7,15,23,31,39,47,55,63,0,8,16,24,32,40,48,56,1,2,3,
+4,5,6,56,57,58,59,60,61,62]
+var fianchettoSquares = [9,14,49,54]
+var blackStartSquares = [0,1,2,3,4,5,6,7]
+var whiteStartSquares = [57,58,59,60,61,62,63]
+
+
+
+
 document.addEventListener("DOMContentLoaded",loadDom)
 // document.addEventListener("mouseover",highlight)
 
