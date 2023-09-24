@@ -1,5 +1,5 @@
 # chessAI
-Check out the project in action here: [https://csc4790-fall2022-org.github.io/senior-project-ander-swartz/](https://anderswartz.github.io/chessAI/)
+Check out the project in action here: https://anderswartz.github.io/chessAI/
 
 With very little HTML, CSS, and Javascript experience, I have been working on creating a playable chess AI that can beat myself at chess. The goal of this project is to give me experience with hands-on problem solving, and to explore the different types of algorithms that are helpful in game-theory. I am very good and chess and have always wanted to build an AI that can beat me. Although the project is still under development, it is currently able to host a local game between two players on the same computer. Don’t be surprised if the button for the black AI doesn’t work!
 
